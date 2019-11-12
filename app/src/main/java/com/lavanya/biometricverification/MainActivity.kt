@@ -1,5 +1,6 @@
 package com.lavanya.biometricverification
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -14,39 +15,40 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val activity = this
         val executor = Executors.newSingleThreadExecutor()
-        val activity = this // reference to activity
         val biometricPrompt = BiometricPrompt(activity, executor, object : BiometricPrompt.AuthenticationCallback() {
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
                 if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                    // user clicked negative button
-                    Toast.makeText(activity,"Authentication succeded", Toast.LENGTH_LONG).show()
+                    // user clicked negative/cancel button
                 } else {
-//                    TODO("Called when an unrecoverable error has been encountered and the operation is complete.")
+                    TODO("Called when an unrecoverable error has been encountered and the operation is complete.")
                 }
             }
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
-                Log.e("Hello","fefe")
                 runOnUiThread{
-                    Toast.makeText(activity,"Authentication succeded", Toast.LENGTH_LONG).show()
+                    this@MainActivity.startActivity(Intent(activity,NextActivity::class.java))
                 }
             }
 
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
-                Log.e("Hello","lolo")
+                runOnUiThread{
+                    Toast.makeText(activity,"Authentication failed! Please try again.", Toast.LENGTH_SHORT).show()
+                }
             }
         })
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Set the title to display.")
+            .setTitle("Authentication prompt!")
+            /*Subtitle and description are optional parameters, so, you can skip those parameters.
             .setSubtitle("Set the subtitle to display.")
-            .setDescription("Set the description to display")
-            .setNegativeButtonText("Negative Button")
+            .setDescription("Verification required")*/
+            .setNegativeButtonText("Cancel")
             .build()
 
         authenticateButton.setOnClickListener {

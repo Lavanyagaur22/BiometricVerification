@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BiometricVerification</string>
+    <string name="authenticate">Authenticate</string>
+    <string name="auth_success">Authentication successful!</string>
 </resources>
